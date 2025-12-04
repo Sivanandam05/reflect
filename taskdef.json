@@ -1,0 +1,44 @@
+{
+  "family": "reflectapp",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::REPLACE_ME_ACCOUNT_ID:role/REPLACE_ME_EXECUTION_ROLE",
+  "taskRoleArn": "arn:aws:iam::REPLACE_ME_ACCOUNT_ID:role/REPLACE_ME_TASK_ROLE",
+  "containerDefinitions": [
+    {
+      "name": "reflectapp",
+      "image": "REPLACE_ME_IMAGE_PLACEHOLDER",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "hostPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-region": "ap-south-1",
+          "awslogs-group": "/ecs/reflectapp",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "8000" },
+        { "name": "AWS_REGION", "value": "ap-south-1" },
+        { "name": "SQS_QUEUE_URL", "value": "REPLACE_ME_SQS_QUEUE_URL" }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 20
+      }
+    }
+  ]
+}
